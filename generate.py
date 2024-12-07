@@ -5,7 +5,6 @@ import os
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 import torch
 
-
 def numpy_serializer(obj):
     """
     Custom JSON serializer to handle NumPy types
@@ -33,9 +32,7 @@ def Generate_Main(all_extracted_info):
     Returns:
         str: Generated report text
     """
-    print("AAA")
     try:
-        print("try statement")
         # Configure logging
         logging.basicConfig(level=logging.INFO)
         logger = logging.getLogger(__name__)
@@ -69,7 +66,6 @@ def Generate_Main(all_extracted_info):
         return report_text
 
     except Exception as e:
-        print("??")
         logging.error(f"Error generating report: {e}")
         return ""
 
@@ -129,32 +125,38 @@ def generate_paragraph_answers(json_file):
             query = query_block.get("query", "No query found")
             results = query_block.get("results", [])
             context = " ".join(result.get("text", "").strip() for result in results)
-            print(context)
-            # Prepare the input for the model with a detailed and professional prompt
+
+            # Check if context is available
             if context:
+                # Refined input for better English answers
                 input_text = f"""
-                **You are applying for a place with an application.**
                 **Question:** {query}
                 **Context:** {context}
-                **Task:** Using the context provided, answer the question in a well-structured, professional paragraph. 
-                Please ensure that the response is clear, grammatically correct, and free of incomplete words. 
-                Avoid unfinished sentences, ensure coherence, and write in a formal, professional tone.
-                Provide a comprehensive answer that summarizes the key points and ensures that any claims are supported with evidence.
+                **Task:** Based on the provided context, please answer the question in a well-structured, comprehensive, and grammatically correct paragraph. 
+                Ensure the response is coherent, clear, and free of errors. The answer should be complete and logically consistent, summarizing the key points from the context.
                 """
 
-                print("starting thinking")
                 # Tokenize and generate text
                 inputs = tokenizer.encode(input_text, return_tensors="pt", max_length=1024, truncation=True)
-                output = model.generate(inputs, max_length=250, num_return_sequences=1, no_repeat_ngram_size=2, early_stopping=True)
+                
+                # Set pad_token_id to eos_token_id and attention_mask to handle padding tokens properly
+                attention_mask = torch.ones(inputs.shape, dtype=torch.long)  # attention mask for padding tokens
+                output = model.generate(inputs, attention_mask=attention_mask, pad_token_id=tokenizer.eos_token_id, 
+                        max_length=1024, num_return_sequences=1, num_beams=2, no_repeat_ngram_size=2, early_stopping=True)
+                
+
 
                 # Decode and save the result
                 answer = tokenizer.decode(output[0], skip_special_tokens=True).strip()
+                str(answer)
                 paragraph_responses.append(f"**Question:** {query}\n**Answer:** {answer}\n")
-                print(f"**Question:** {query}\n**Answer:** {answer}\n")
-                print(output)
+
             else:
                 paragraph_responses.append(f"**Question:** {query}\n**Answer:** No relevant information found.\n")
-                print(f"**Question:** {query}\n**Answer:** No relevant information found.\n")
+
+        # Print only the final answers
+        for response in paragraph_responses:
+            print(response)
 
     except Exception as e:
         print(f"Error generating paragraph answers: {e}")
@@ -167,9 +169,6 @@ input_file = "generated_report.json"
 
 # Check if the generated_report.json exists
 if os.path.exists(input_file):
-    print("Formatting the generated report...")
-    format_report(input_file)
-
     print("Generating paragraph answers...")
     generate_paragraph_answers(input_file)
 else:

@@ -159,8 +159,6 @@ def main():
                 results = qa_system.query_and_extract_info(question)
                 all_extracted_info.append(results)
                 print(f"Question: {question}")
-                for result in results.get('results', []):
-                    print(f"\nRelevant snippet (score: {result['score']:.2f}): {result['text']}")
 
         #print(all_extracted_info)
         Generate_Main(all_extracted_info)
@@ -168,5 +166,5 @@ def main():
     except Exception as e:
         print(f"Error: {e}")
 
-if __name__ == "__main__":
-    main()
+
+main()
