@@ -30,7 +30,7 @@ from transformers import AutoTokenizer, AutoModel
 from sklearn.model_selection import train_test_split
 import torch
 
-from generate import Generate_Main  # Import the function from generate.py
+from generate import Generate_Main
 
 nlp = spacy.load('en_core_web_md')
 
@@ -162,8 +162,8 @@ def main():
                 for result in results.get('results', []):
                     print(f"\nRelevant snippet (score: {result['score']:.2f}): {result['text']}")
 
-        # After extracting info, pass the results to Generate_Main for answer generation
-        Generate_Main(all_extracted_info)  # Call the function from generate.py
+        #print(all_extracted_info)
+        Generate_Main(all_extracted_info)
 
     except Exception as e:
         print(f"Error: {e}")

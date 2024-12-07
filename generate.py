@@ -71,13 +71,12 @@ def Generate_Main(all_extracted_info):
         return ""
 
 
-def format_report(json_file, output_file):
+def format_report(json_file):
     """
     Formats a JSON report into a readable text format.
 
     Args:
         json_file (str): Path to the input JSON file
-        output_file (str): Path to save the formatted output file
     """
     try:
         # Read the JSON report
@@ -96,24 +95,21 @@ def format_report(json_file, output_file):
                 text = result.get("text", "").strip()
                 answers.append(f"{idx}. Source: {source}\n   {text}\n")
 
-        # Join and save formatted text
+        # Print formatted text to console
         formatted_text = "\n\n".join(answers)
-        with open(output_file, 'w', encoding='utf-8') as f:
-            f.write(formatted_text)
+        print(formatted_text)
 
-        print(f"Formatted report saved to {output_file}")
     except Exception as e:
         print(f"Error formatting report: {e}")
 
 
-def generate_paragraph_answers(json_file, output_file):
+def generate_paragraph_answers(json_file):
     """
     Generates paragraph responses for each query using the query as the question
     and the text from all results as the context, using a local model.
 
     Args:
         json_file (str): Path to the JSON report file
-        output_file (str): Path to save the paragraph answers
     """
     try:
         # Load the GPT-2 model and tokenizer
@@ -131,25 +127,30 @@ def generate_paragraph_answers(json_file, output_file):
             results = query_block.get("results", [])
             context = " ".join(result.get("text", "").strip() for result in results)
 
-            # Prepare the input for the model
+            # Prepare the input for the model with a detailed and professional prompt
             if context:
-                input_text = f"Question: {query}\nContext: {context}\nAnswer the question in a well-structured paragraph."
-                
+                input_text = f"""
+                **You are applying for a place with an application.**
+                **Question:** {query}
+                **Context:** {context}
+                **Task:** Using the context provided, answer the question in a well-structured, professional paragraph. 
+                Please ensure that the response is clear, grammatically correct, and free of incomplete words. 
+                Avoid unfinished sentences, ensure coherence, and write in a formal, professional tone.
+                Provide a comprehensive answer that summarizes the key points and ensures that any claims are supported with evidence.
+                """
+
                 # Tokenize and generate text
                 inputs = tokenizer.encode(input_text, return_tensors="pt", max_length=1024, truncation=True)
-                output = model.generate(inputs, max_length=150, num_return_sequences=1, no_repeat_ngram_size=2, early_stopping=True)
+                output = model.generate(inputs, max_length=250, num_return_sequences=1, no_repeat_ngram_size=2, early_stopping=True)
 
                 # Decode and save the result
                 answer = tokenizer.decode(output[0], skip_special_tokens=True).strip()
                 paragraph_responses.append(f"**Question:** {query}\n**Answer:** {answer}\n")
+                print(f"**Question:** {query}\n**Answer:** {answer}\n")
             else:
                 paragraph_responses.append(f"**Question:** {query}\n**Answer:** No relevant information found.\n")
+                print(f"**Question:** {query}\n**Answer:** No relevant information found.\n")
 
-        # Save the paragraph responses
-        with open(output_file, 'w', encoding='utf-8') as f:
-            f.write("\n\n".join(paragraph_responses))
-
-        print(f"Paragraph responses saved to {output_file}")
     except Exception as e:
         print(f"Error generating paragraph answers: {e}")
 
@@ -158,15 +159,13 @@ def generate_paragraph_answers(json_file, output_file):
 if __name__ == "__main__":
     # Path to the generated_report.json
     input_file = "generated_report.json"
-    formatted_file = "formatted_generated_report.txt"
-    paragraph_file = "paragraph_responses_with_gpt2.txt"
 
     # Check if the generated_report.json exists
     if os.path.exists(input_file):
         print("Formatting the generated report...")
-        format_report(input_file, formatted_file)
+        format_report(input_file)
 
         print("Generating paragraph answers...")
-        generate_paragraph_answers(input_file, paragraph_file)
+        generate_paragraph_answers(input_file)
     else:
         print(f"Input file '{input_file}' not found. Please ensure the report is generated.")
