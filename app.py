@@ -15,7 +15,7 @@ class StartupAnimation(QWidget):
         self.setStyleSheet("background-color: black;")
         self.setWindowOpacity(0)  
 
-        self.label_main = QLabel("RiterI", self)
+        self.label_main = QLabel("RiterAI", self)
         self.label_main.setStyleSheet("color: white; font-size: 50px; font-weight: bold;")
         self.label_main.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -57,3 +57,27 @@ class StartupAnimation(QWidget):
         self.fade_out_animation.start()
 
         QTimer.singleShot(1000, self.close)  
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+
+    # Set dark theme
+    dark_palette = QPalette()
+    dark_palette.setColor(QPalette.ColorRole.Window, QColor(18, 18, 18))
+    dark_palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.white)
+    dark_palette.setColor(QPalette.ColorRole.Base, QColor(36, 36, 36))
+    dark_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(18, 18, 18))
+    dark_palette.setColor(QPalette.ColorRole.ToolTipBase, Qt.GlobalColor.white)
+    dark_palette.setColor(QPalette.ColorRole.ToolTipText, Qt.GlobalColor.white)
+    dark_palette.setColor(QPalette.ColorRole.Text, Qt.GlobalColor.white)
+    dark_palette.setColor(QPalette.ColorRole.Button, QColor(36, 36, 36))
+    dark_palette.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.white)
+    dark_palette.setColor(QPalette.ColorRole.BrightText, Qt.GlobalColor.red)
+
+    app.setPalette(dark_palette)
+    app.setStyle("Fusion")
+
+    window = StartupAnimation()
+    window.setFixedSize(window.size())
+    window.show()
+    sys.exit(app.exec())
