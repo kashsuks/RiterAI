@@ -15,7 +15,7 @@ class StartupAnimation(QWidget):
         self.setStyleSheet("background-color: black;")
         self.setWindowOpacity(0)  
 
-        self.label_main = QLabel("CraftAI", self)
+        self.label_main = QLabel("RiterI", self)
         self.label_main.setStyleSheet("color: white; font-size: 50px; font-weight: bold;")
         self.label_main.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -28,4 +28,5 @@ class StartupAnimation(QWidget):
         layout.addWidget(self.label_sub)
         self.setLayout(layout)
 
+        
         
