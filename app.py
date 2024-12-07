@@ -8,3 +8,4 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout,
     QPushButton, QWidget, QFileDialog, QTextEdit, QComboBox, QScrollArea
 )
+
