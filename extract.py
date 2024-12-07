@@ -14,7 +14,7 @@ from typing import List, Dict
 import logging
 import re
 import numpy as np
-import faiss  # Local vector database
+import faiss  
 
 try:
     from rake_nltk import Rake
@@ -27,10 +27,9 @@ from transformers import AutoTokenizer, AutoModel
 from sklearn.model_selection import train_test_split
 import torch
 
-# Import the new function from generate.py to process extracted data
-#from generate import Generate_Main
+from generate import Generate_Main
 
-# Initialize spaCy for text cleaning
+
 nlp = spacy.load('en_core_web_md')
 
 class AdvancedDocumentQA:
@@ -38,7 +37,6 @@ class AdvancedDocumentQA:
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
-        # Load a domain-adapted model for contextual embeddings
         self.tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/paraphrase-MiniLM-L6-v2")
         self.model = AutoModel.from_pretrained("sentence-transformers/paraphrase-MiniLM-L6-v2")
 
@@ -49,9 +47,6 @@ class AdvancedDocumentQA:
         self.logger.info(f"FAISS index {index_name} initialized with dimension {self.dimension}")
 
     def preprocess_text(self, text: str) -> str:      
-        """
-        Clean and preprocess text. Also, lemmatizes it, meaning converts for example: "running" to base form "run".
-        """
         doc = nlp(text)
         clean_text = " ".join([token.lemma_.lower() for token in doc if not token.is_stop and token.is_alpha])
         return clean_text
@@ -91,19 +86,14 @@ class AdvancedDocumentQA:
         return rake.get_ranked_phrases()[:top_n]
 
     def weighted_score(self, query: str, text_chunk: str) -> float:
-        """
-        Compute a weighted score combining semantic similarity and keyword overlap, accounting for synonyms.
-        """
         query_keywords = set(self.extract_keywords(query))
         text_keywords = set(self.extract_keywords(text_chunk))
         keyword_overlap = len(query_keywords & text_keywords) / len(query_keywords | text_keywords)
 
-        # Compute semantic similarity using Sentence-BERT embeddings
-        query_embedding = self.embed_text(query).flatten()  # Flatten to make it a 1D array
-        text_embedding = self.embed_text(text_chunk).flatten()  # Flatten to make it a 1D array
+        query_embedding = self.embed_text(query).flatten()  
+        text_embedding = self.embed_text(text_chunk).flatten()  
         semantic_similarity = np.dot(query_embedding, text_embedding) / (np.linalg.norm(query_embedding) * np.linalg.norm(text_embedding))
 
-        # Assign weights (adjust weights based on desired balance between semantic and keyword similarity)
         return 0.7 * semantic_similarity + 0.3 * keyword_overlap
 
     def process_document(self, file_path: str):
@@ -160,7 +150,6 @@ def main():
         for file_path in uploaded_files:
             qa_system.process_document(file_path)
 
-        # Now query and extract answers for each question
         all_extracted_info = []
 
         for question in questions:
@@ -171,9 +160,8 @@ def main():
                 for result in results.get('results', []):
                     print(f"\nRelevant snippet (score: {result['score']:.2f}): {result['text']}")
 
-        # Now call the function from generate.py
         #print(all_extracted_info)
-        #Generate_Main(all_extracted_info)
+        Generate_Main(all_extracted_info)
 
     except Exception as e:
         print(f"Error: {e}")
