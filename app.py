@@ -174,27 +174,17 @@ class HomePage(QWidget):
             pixmap = QPixmap.fromImageReader(image_reader)
             scaled_pixmap = pixmap.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
             self.file_preview.setPixmap(scaled_pixmap)
-            self.upload_file(file_name)  # Upload the file after selection
+            self.upload_file(file_name)  
         else:
             self.file_preview.setText("No File Selected")
 
     def upload_file(self, file_path):
-        # Ensure 'user_files' directory exists
         os.makedirs('user_files', exist_ok=True)
 
-        # Get the file name and move it to the 'user_files' folder
         file_name = os.path.basename(file_path)
         destination = os.path.join('user_files', file_name)
 
-        shutil.copy(file_path, destination)  # Copy the file to the directory
-
-    def update_question_mode(self, index):
-        if index == 0:  # Text mode
-            self.question_text_box.setVisible(True)
-            self.question_file_button.setVisible(False)
-        elif index == 1:  
-            self.question_text_box.setVisible(False)
-            self.question_file_button.setVisible(True)
+        shutil.copy(file_path, destination)  
 
     def adjust_question_box_height(self):
         document = self.question_text_box.document()
@@ -233,7 +223,7 @@ class HomePage(QWidget):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("CraftAI")
+        self.setWindowTitle("RiterAI")
         self.showFullScreen()
 
         self.startup = StartupAnimation()
