@@ -3,10 +3,13 @@ import json
 import ast
 import subprocess
 import os
+import nltk
+nltk.download('stopwords')
+nltk.download('punkt_tab')
 
 # There were some issues with different OpenMP, so the following two lines bypass them.
-#os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"    
-#os.environ["OMP_NUM_THREADS"] = "1"
+# os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"    
+# os.environ["OMP_NUM_THREADS"] = "1"
  
 import fitz  # PyMuPDF
 import spacy
