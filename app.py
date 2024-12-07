@@ -58,6 +58,18 @@ class StartupAnimation(QWidget):
 
         QTimer.singleShot(1000, self.close)  
 
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("CraftAI")
+        self.showFullScreen()
+
+        self.startup = StartupAnimation()
+        self.startup.setFixedSize(self.size())
+        self.setCentralWidget(self.startup)
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
@@ -77,7 +89,6 @@ if __name__ == "__main__":
     app.setPalette(dark_palette)
     app.setStyle("Fusion")
 
-    window = StartupAnimation()
-    window.setFixedSize(window.size())
+    window = MainWindow()
     window.show()
     sys.exit(app.exec())
