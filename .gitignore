@@ -131,6 +131,9 @@ ENV/
 env.bak/
 venv.bak/
 
+#Remove user files
+user_files/
+
 # Spyder project settings
 .spyderproject
 .spyproject
