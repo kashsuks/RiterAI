@@ -9,3 +9,23 @@ from PyQt6.QtWidgets import (
     QPushButton, QWidget, QFileDialog, QTextEdit, QComboBox, QScrollArea
 )
 
+class StartupAnimation(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setStyleSheet("background-color: black;")
+        self.setWindowOpacity(0)  
+
+        self.label_main = QLabel("CraftAI", self)
+        self.label_main.setStyleSheet("color: white; font-size: 50px; font-weight: bold;")
+        self.label_main.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.label_sub = QLabel("", self)
+        self.label_sub.setStyleSheet("color: white; font-size: 20px; font-weight: normal;")
+        self.label_sub.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.label_main)
+        layout.addWidget(self.label_sub)
+        self.setLayout(layout)
+
+        
