@@ -70,7 +70,7 @@ class AdvancedDocumentQA:
             self.logger.error(f"Text extraction error for {file_path}: {e}")
             return ""
 
-    def chunk_text(self, text: str, chunk_size: int = 250, overlap: int = 50) -> List[str]:
+    def chunk_text(self, text: str, chunk_size: int = 400, overlap: int = 50) -> List[str]:
         chunks = []
         for i in range(0, len(text), chunk_size - overlap):
             chunks.append(text[i:i + chunk_size])
