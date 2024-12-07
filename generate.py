@@ -33,7 +33,9 @@ def Generate_Main(all_extracted_info):
     Returns:
         str: Generated report text
     """
+    print("AAA")
     try:
+        print("try statement")
         # Configure logging
         logging.basicConfig(level=logging.INFO)
         logger = logging.getLogger(__name__)
@@ -67,6 +69,7 @@ def Generate_Main(all_extracted_info):
         return report_text
 
     except Exception as e:
+        print("??")
         logging.error(f"Error generating report: {e}")
         return ""
 
@@ -126,7 +129,7 @@ def generate_paragraph_answers(json_file):
             query = query_block.get("query", "No query found")
             results = query_block.get("results", [])
             context = " ".join(result.get("text", "").strip() for result in results)
-
+            print(context)
             # Prepare the input for the model with a detailed and professional prompt
             if context:
                 input_text = f"""
@@ -139,6 +142,7 @@ def generate_paragraph_answers(json_file):
                 Provide a comprehensive answer that summarizes the key points and ensures that any claims are supported with evidence.
                 """
 
+                print("starting thinking")
                 # Tokenize and generate text
                 inputs = tokenizer.encode(input_text, return_tensors="pt", max_length=1024, truncation=True)
                 output = model.generate(inputs, max_length=250, num_return_sequences=1, no_repeat_ngram_size=2, early_stopping=True)
@@ -147,6 +151,7 @@ def generate_paragraph_answers(json_file):
                 answer = tokenizer.decode(output[0], skip_special_tokens=True).strip()
                 paragraph_responses.append(f"**Question:** {query}\n**Answer:** {answer}\n")
                 print(f"**Question:** {query}\n**Answer:** {answer}\n")
+                print(output)
             else:
                 paragraph_responses.append(f"**Question:** {query}\n**Answer:** No relevant information found.\n")
                 print(f"**Question:** {query}\n**Answer:** No relevant information found.\n")
@@ -156,16 +161,16 @@ def generate_paragraph_answers(json_file):
 
 
 # Allow direct script execution for testing
-if __name__ == "__main__":
-    # Path to the generated_report.json
-    input_file = "generated_report.json"
 
-    # Check if the generated_report.json exists
-    if os.path.exists(input_file):
-        print("Formatting the generated report...")
-        format_report(input_file)
+# Path to the generated_report.json
+input_file = "generated_report.json"
 
-        print("Generating paragraph answers...")
-        generate_paragraph_answers(input_file)
-    else:
-        print(f"Input file '{input_file}' not found. Please ensure the report is generated.")
+# Check if the generated_report.json exists
+if os.path.exists(input_file):
+    print("Formatting the generated report...")
+    format_report(input_file)
+
+    print("Generating paragraph answers...")
+    generate_paragraph_answers(input_file)
+else:
+    print(f"Input file '{input_file}' not found. Please ensure the report is generated.")
