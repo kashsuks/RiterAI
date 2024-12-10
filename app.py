@@ -257,3 +257,8 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
+
+#TO-DO:
+"""
+Make the UI look better 
+"""
